@@ -73,18 +73,7 @@ const globe = new THREE.Mesh(
         }
     })
 );
-
-const pin = new THREE.Mesh(
-    new THREE.SphereGeometry(0.09, 50, 50),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
-);
-pin.name = "pin"
-
-let coords = [40.7142700, -74.0059700];
-let latlon = new THREE.Vector3(...calcPosFromLatLonRad(coords[0], coords[1], 5));
-pin.position.x = latlon.x;
-pin.position.y = latlon.y;
-pin.position.z = latlon.z;
+globe.name = `globe`;
 
 const textrender = new CSS2DRenderer();
 textrender.setSize(window.innerWidth, window.innerHeight);
@@ -92,16 +81,6 @@ textrender.domElement.style.position = `absolute`;
 textrender.domElement.style.top = `0px`;
 textrender.domElement.style.pointerEvents = `none`;
 document.body.appendChild(textrender.domElement);
-
-const div = document.createElement('div');
-div.textContent = `why is th economy suffering in the modern times?`;
-div.style.backgroundColor = `black`;
-div.style.fontWeight = `800`;
-div.style.color = `white`;
-div.style.fontSize = `smallest`;
-const textobject = new CSS2DObject(div);
-pin.add(textobject);
-
 
 const atmosphere = new THREE.Mesh(
     new THREE.SphereGeometry(5, 50, 50),
@@ -113,8 +92,9 @@ const atmosphere = new THREE.Mesh(
     })
 );
 
-atmosphere.scale.set(1.5, 1.5, 1.5);
+atmosphere.name = 'atmosphere';
 
+atmosphere.scale.set(1.5, 1.5, 1.5);
 
 const stargeo = new THREE.BufferGeometry();
 const starmat = new THREE.PointsMaterial({ color: 0xffffff });
@@ -131,11 +111,39 @@ stargeo.setAttribute('position', new THREE.Float32BufferAttribute(starvertices, 
 
 const star = new THREE.Points(stargeo, starmat);
 
+//pin here---------------------------------------------------
+
+const pin = new THREE.Mesh(
+    new THREE.SphereGeometry(0.09, 50, 50),
+    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+pin.name = "pin"
+
+let coords = [40.7142700, -74.0059700];
+let latlon = new THREE.Vector3(...calcPosFromLatLonRad(coords[0], coords[1], 5));
+pin.position.x = latlon.x;
+pin.position.y = latlon.y;
+pin.position.z = latlon.z;
+
+const div = document.createElement('div');
+div.textContent = `our earth is mf suffering and you are laughing why?`;
+div.style.backgroundColor = `black`;
+div.style.fontWeight = `800`;
+div.style.color = `white`;
+div.style.fontSize = `${(Math.random() * 10)+4}px`;
+const textobject = new CSS2DObject(div);
+pin.add(textobject);
+
+function removepin(e) {
+    e.remove(e.children[0]);
+    globe.remove(e);
+}
+//------------------------------------------------------------
+
 scene.add(star);
 scene.add(atmosphere);
-globe.add(pin);
 scene.add(globe);
-
+globe.add(pin);
 
 function setCanvasDimensions(canvas, width, height, set2dTransform = false) {
     const ratio = window.devicePixelRatio
@@ -156,38 +164,28 @@ window.addEventListener('resize', () => {
     text.setSize(window.innerWidth, window.innerHeight);
     renderer.setSize(width, height);
     setCanvasDimensions(renderer.domElement, width, height);
-})
+});
 
-function objectViewBlocked(objectName) {
-    if (threeScene) {
-        const object = threeScene.getObjectByName(objectName);
-        if (object) {
-            const direction = new THREE.Vector3();
-            direction.subVectors(object.position, threeCamera.position);
-            direction.normalize();
-            const raycaster = new THREE.Raycaster(threeCamera.position, direction);
-            const intersects = raycaster.intersectObjects(threeScene.children, false);
-            if (intersects.length > 0) {
-                for (let j = 0; j < intersects.length; j++) {
-                    if ((intersects[j].object !== undefined) && (intersects[j].object['name'] !== objectName) && (intersects[j].object['name'] !== '')) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+function objectViewBlocked(object) {
+    const direction = new THREE.Vector3();
+    direction.subVectors(camera.position, object.position);
+    direction.normalize();
+    const raycaster = new THREE.Raycaster(object.position, direction);
+    const intersects = raycaster.intersectObjects(scene.children, false);
+    if (intersects[0].object.name == `globe`) {
+        removepin(object);
     }
-    return true;
-};
-
+}
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.minDistance = 7;
 controls.maxDistance = 18;
 controls.autoRotate = true;
+controls.autoRotateSpeed = 1;
 camera.position.set(0, 0, 10);
 controls.update();
 
+//setInterval(() => { objectViewBlocked(pin) }, 2000)
 
 function animate() {
     requestAnimationFrame(animate);
@@ -195,4 +193,5 @@ function animate() {
     renderer.render(scene, camera);
     controls.update();
 }
+
 animate();

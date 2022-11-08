@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.text {
+    display: flex;
+    background-color: black;
+    font-weight: 800;
+    color: white;
+    text-align: center;
+    letter-spacing: 1px;
+    word-break: break-word;
+    width: fit-content;
+    max-width: 25ch;
+    animation-name: creation;
+    animation-iteration-count: 1;
+    animation-duration: 2s;
+}
+
+@keyframes creation {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 100;
+    }
+}
+
+@keyframes deletion {
+    from {
+        opacity: 100;
+    }
+    to {
+        opacity: 0;
+    }
+}

@@ -64,7 +64,7 @@ document.body.appendChild(renderer.domElement);
 
 //globe here
 const globe = new THREE.Mesh(
-    new THREE.SphereGeometry(5, 50, 50),
+    new THREE.SphereGeometry(5, 100, 100),
     new THREE.ShaderMaterial({
         vertexShader,
         fragmentShader,
@@ -126,7 +126,6 @@ function objectViewBlocked(object) {
     direction.normalize();
     const raycaster = new THREE.Raycaster(object.position, direction);
     const intersects = raycaster.intersectObjects(scene.children, false);
-    console.log(document.getElementById(`${id}`));
     const textobject = document.getElementById(`${object.name}`);
     if (intersects[0].object.name == `globe` || textobject != null) {
         textobject.style.animationName = `deletion`;
@@ -151,8 +150,9 @@ function createpin(longitude, latitude, message, size) {
     objectViewBlocked(pin);
     const div = document.createElement('div');
     div.textContent = message;
-    div.style.fontSize = size == undefined ? "0.5em" : size;
-    div.setAttribute('id', message)
+    div.style.fontSize = size == undefined ? `${(1/message.length)*(message.length/10)+0.25}em` : size;
+    console.log(div.style.fontSize);
+    div.setAttribute('id', message);
     div.classList.add('text');
     const textobject = new CSS2DObject(div);
     textobject.name = message;
@@ -181,7 +181,7 @@ window.addEventListener('resize', () => {
     const height = window.innerHeight;
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    text.setSize(window.innerWidth, window.innerHeight);
+    textrender.setSize(width, height);
     renderer.setSize(width, height);
     setCanvasDimensions(renderer.domElement, width, height);
 });
@@ -208,5 +208,5 @@ function getinfo() {
 
 animate();
 
-//let pin = createpin(coords[0], coords[1], "There's a new meme from the weeknd's super bowl halftime show, and its quite literally dizzying");
+let pin = createpin(coords[0], coords[1], "12356789X12356789X12356789X12356789X12356789X12356789X12356789X12356789X12356789X12356789X12356789X12356789X");
 //setInterval(() => { objectViewBlocked(pin) }, 2000);

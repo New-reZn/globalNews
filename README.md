@@ -1,2 +1,6 @@
 # globalNews
  Global News Literally
+it is(was) supposed to be a website showing a 3d globe with real-time news about places...
+
+
+NOTE:it took way too long to reach to this point but still is inconclusive ;loading of news and providing news back to user requires use of multithreading which is far beyond the scope of this project. lesson learned: never create big project with no prior experience with the work environment . I am still keeping this project tho...
